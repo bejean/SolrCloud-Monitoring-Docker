@@ -1,0 +1,43 @@
+version: '2.4'
+services:
+  zk1:
+    mem_limit: 1g
+    mem_swappiness: 1
+    memswap_limit: 0
+  zk2:
+    mem_limit: 1g
+    mem_swappiness: 1
+    memswap_limit: 0
+  zk3:
+    mem_limit: 1g
+    mem_swappiness: 1
+    memswap_limit: 0
+  solr1:
+    mem_limit: 1g
+    mem_swappiness: 1
+    memswap_limit: 0
+    environment:
+      - solr_sysprop_solr.disable.shardsWhitelist=true
+      #- solr_sysprop_zone=dc1      
+  solr2:
+    mem_limit: 1g
+    mem_swappiness: 1
+    memswap_limit: 0
+    environment:
+      - solr_sysprop_solr.disable.shardsWhitelist=true
+      #- solr_sysprop_zone=dc2      
+  solr3:
+    mem_limit: 1g
+    mem_swappiness: 1
+    memswap_limit: 0
+    environment:
+      - solr_sysprop_solr.disable.shardsWhitelist=true
+      #- solr_sysprop_zone=dc1      
+  solr4:
+    mem_limit: 1g
+    mem_swappiness: 1
+    memswap_limit: 0
+    environment:
+      - solr_sysprop_solr.disable.shardsWhitelist=true
+      #- solr_sysprop_zone=dc2      
+

@@ -1,0 +1,103 @@
+version: '2.4'
+services:
+  prometheus:
+    image: 'prom/prometheus:${PROMETHEUS_VERSION}'
+    container_name: '${COMPOSE_PROJECT_NAME}_monitoring_prometheus'
+    volumes:
+      - 'solr_prometheus:/prometheus'
+      - './prometheus/prometheus.yml:/etc/prometheus/prometheus.yml'
+      - './alertmanager/alert.rules/alerts.rules.yml:/alertmanager/alert.rules/alerts.rules.yml'
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--storage.tsdb.retention.time=365d'
+    ports:
+      - '9090:9090'
+    networks:
+      - solr
+
+  alertmanager:
+    image: 'prom/alertmanager:${ALERTMANAGER_VERSION}'
+    container_name: '${COMPOSE_PROJECT_NAME}_monitoring_alertmanager'
+    deploy:
+      replicas: 1
+    volumes:
+      - ./alertmanager/alertmanager.yml:/etc/alertmanager/alertmanager.yml
+      - ./alertmanager/templates/default.tmpl:/etc/alertmanager/templates/default.tmpl
+    command:
+      - '--config.file=/etc/alertmanager/alertmanager.yml'
+    ports:
+      - '9093:9093'
+    networks:
+      - solr
+
+  solr_exporter:
+    image: solr:${SOLR_VERSION}
+    container_name: '${COMPOSE_PROJECT_NAME}_monitoring_solr_exporter'
+    ports:
+     - "9854:9854"
+    entrypoint:
+      - "/opt/solr/contrib/prometheus-exporter/bin/solr-exporter"
+      - "-p"
+      - "9854"
+      - "-z"
+      - "zk1:2181,zk2:2181,zk3:2181"
+      - "-f"
+      - "/opt/solr/contrib/prometheus-exporter/conf/solr-exporter-config.xml"
+      - "-n"
+      - "8"
+    networks:
+      - solr
+
+  zk_exporter:
+    image: 'bitnami/zookeeper-exporter:${ZOOKEEPER_EXPORTER_VERSION}'
+    container_name: '${COMPOSE_PROJECT_NAME}_monitoring_zk_exporter'
+    command: '--zk-list=zk1:2181,zk2:2181,zk3:2181 --timeout=5'
+    ports:
+      - '8080:8080'
+    networks:
+      - solr
+
+  grafana:
+    image: 'grafana/grafana:${GRAFANA_VERSION}'
+    container_name: '${COMPOSE_PROJECT_NAME}_monitoring_grafana'
+    environment:
+      - GF_PATHS_CONFIG=/etc/grafana/grafana.ini
+    depends_on:
+      - prometheus
+    volumes:
+      - 'solr_grafana:/var/lib/grafana'
+      - './grafana/datasource.yml:/etc/grafana/provisioning/datasources/datasource.yml'
+      - './grafana/dashboards.yml:/etc/grafana/provisioning/dashboards/dashboards.yml'
+      - './grafana/grafana.ini:/etc/grafana/grafana.ini'
+      - './grafana/dashboards:/var/lib/grafana/dashboards'
+    ports:
+      - '3000:3000'
+    networks:
+      - solr
+
+  loki:
+    image: grafana/loki:${LOKI_VERSION}
+    container_name: '${COMPOSE_PROJECT_NAME}_monitoring_loki'
+    volumes:
+      - 'solr_loki:/loki'
+    ports:
+      - "3100:3100"
+    command: -config.file=/etc/loki/local-config.yaml
+    networks:
+      - solr
+
+
+volumes:
+  solr_prometheus:
+    driver: local
+  solr_grafana:
+    driver: local
+  solr_loki:
+    driver: local
+
+
+networks:
+  solr:
+    name: '${COMPOSE_PROJECT_NAME}_solr'
+    driver: bridge

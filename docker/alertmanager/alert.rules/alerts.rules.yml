@@ -1,0 +1,14 @@
+groups:
+ 
+- name: Alertes monitoring
+  rules:
+    - alert: CpuLoad
+      expr: solr_node_load1 / (count without (cpu, mode) (solr_node_cpu_seconds_total{mode="idle"})) > 1
+      for: 1m
+      labels:
+        severity: critique
+      annotations:
+        identifier: "{{ $labels.instance }}"
+        summary: "CPU load average (1mn)"
+        description_starts: "Value is high : {{ $value }}"
+        description_ends: "Value is back to normal : {{ $value }}"

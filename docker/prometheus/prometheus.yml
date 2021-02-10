@@ -1,0 +1,125 @@
+global:
+   # How frequently to scrape targets (default : 1m)
+  scrape_interval:     15s
+  # How frequently to evaluate rules (default : 1m)
+  evaluation_interval: 15s
+
+  # Attach these labels to any time series or alerts when communicating with
+  # external systems (federation, remote storage, Alertmanager).
+  external_labels:
+    env: 'solr'   # C'est simplement le nom de votre environnement
+
+# spécification du serveur alertmanager
+
+alerting:
+  alertmanagers:
+  - static_configs:
+    - targets:
+      - alertmanager:9093
+    scheme: http
+    timeout: 10s
+
+# fichier de règles pour l'alerting, c'est dans ce fichier que sont les définitions des alertes
+
+rule_files:
+  - "/alertmanager/alert.rules/alerts.rules.yml"
+
+# la scrape configuration de prometheus, les hosts qu'il va contacter pour chercher les métrique
+scrape_configs:
+
+  - job_name: 'prometheus'     
+    static_configs:
+      - targets: ['localhost:9090']
+    scrape_interval: 5s
+
+    ### configuration de blackbox, notre probe http 
+
+  # - job_name: 'blackbox'
+  #   metrics_path: /probe
+  #   params:
+  #     module: [http_2xx]  # Look for a HTTP 200 response.
+  #   relabel_configs:
+  #     - source_labels: [__address__]
+  #       regex: ([^,]*),(.*)                   # <-- ici on fait une regex pour tagger nos urls avec une virgule
+  #       replacement: $1
+  #       target_label: __param_target
+  #     - source_labels: [__address__]
+  #       target_label: instance
+  #     - target_label: __address__
+  #       replacement: localhost:9115  # The blackbox exporter's real hostname:port.
+
+  #   static_configs:
+  #     - targets: 
+  #       - http://localhost:9090,prometheus
+
+  # node-exporter - 9100
+  # solr-exporter - 9854
+  # jmx-exporter - 7070
+  # zk-exporter - 8080
+  
+  - job_name: 'solr_metrics'
+    static_configs:
+    - targets: ['solr_exporter:9854']
+    metric_relabel_configs:
+    - source_labels: [__name__]
+      regex: '^(.*)'
+      replacement: 'solr_metrics_$1'
+      target_label: __name__
+    - source_labels: [__name__]
+      regex: '^solr_metrics_solr_metrics_(.*)'
+      replacement: 'solr_metrics_$1'
+      target_label: __name__
+
+  - job_name: 'solr_node'
+    static_configs:
+    - targets: ['solr1:9100', 'solr2:9100', 'solr3:9100', 'solr4:9100']
+    metric_relabel_configs:
+    - source_labels: [__name__]
+      regex: '^(.*)'
+      replacement: 'solr_node_$1'
+      target_label: __name__
+    - source_labels: [__name__]
+      regex: '^solr_node_node_(.*)'
+      replacement: 'solr_node_$1'
+      target_label: __name__
+
+  - job_name: 'solr_jmx'
+    static_configs:
+    - targets: ['solr1:7070', 'solr2:7070', 'solr3:7070', 'solr4:7070']
+    metric_relabel_configs:
+    - source_labels: [__name__]
+      regex: '^(.*)'
+      replacement: 'solr_jmx_$1'
+      target_label: __name__
+
+
+  - job_name: 'zk_metrics'
+    static_configs:
+    - targets: ['zk_exporter:8080']
+    metric_relabel_configs:
+    - source_labels: [__name__]
+      regex: '^(.*)'
+      replacement: 'zk_metrics_$1'
+      target_label: __name__
+
+  - job_name: 'zk_node'
+    static_configs:
+    - targets: ['zk1:9100', 'zk2:9100', 'zk3:9100']
+    metric_relabel_configs:
+    - source_labels: [__name__]
+      regex: '^(.*)'
+      replacement: 'zk_node_$1'
+      target_label: __name__
+    - source_labels: [__name__]
+      regex: '^zk_node_node_(.*)'
+      replacement: 'zk_node_$1'
+      target_label: __name__
+
+  - job_name: 'zk_jmx'
+    static_configs:
+    - targets: ['zk1:7070', 'zk2:7070', 'zk3:7070']
+    metric_relabel_configs:
+    - source_labels: [__name__]
+      regex: '^(.*)'
+      replacement: 'zk_jmx_$1'
+      target_label: __name__
