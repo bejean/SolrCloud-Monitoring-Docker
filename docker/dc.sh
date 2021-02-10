@@ -5,7 +5,7 @@ usage(){
     echo ""
     echo "    -a action         : up | stop | down | clean";
     echo "    -p project_name   : project_name in order to be create relevant .env file";
-    echo "    -m mode           : solr mode (cloud | standalone)";
+    echo "    -m mode           : solr mode (monitoring | cloud | standalone)";
     echo ""
     echo "  Example : $0 -a up -p minnie"
     echo ""
@@ -23,7 +23,7 @@ fi
 
 export ACTION=
 export PROJECT=
-export MODE=cloud
+export MODE=
 
 if [ $# -gt 1 ]; then
     while getopts ":a:p:m:" opt; do
@@ -42,7 +42,12 @@ if [ -z "$ACTION" ] ; then
 fi
 
 if [[ ! "$ACTION" =~ ^(up|stop|down|clean)$ ]]; then
-    echo "EROR: Unknown action!"
+    echo "ERROR: Unknown action!"
+    usage
+fi
+
+if [[ ! "$MODE" =~ ^(monitoring|cloud|standalone)$ ]]; then
+    echo "ERROR: Unknown mode!"
     usage
 fi
 
@@ -60,31 +65,52 @@ cp env/$PROJECT .env
 
 history "$*"
 
-if [ "$MODE" == "standalone" ] ; then 
-    COMPOSE_FILE="docker-compose-standalone.yml"
-else
-    COMPOSE_FILE="docker-compose-cloud.yml"
-fi
 
 if [ "$ACTION" == "up" ] ; then 
-    if [ -f "env/${PROJECT}.docker-compose.yml" ] ; then 
-        docker-compose -f $COMPOSE_FILE -f docker-compose-monitoring.yml -f env/${PROJECT}.docker-compose.yml up -d --build
+    if [ "$MODE" == "monitoring" ] ; then 
+        if [ -f "env/${PROJECT}.docker-compose.yml" ] ; then 
+            docker-compose -f docker-compose-monitoring.yml -f env/${PROJECT}.docker-compose.yml up -d --build
+        else
+            docker-compose -f docker-compose-monitoring.yml up -d --build
+        fi
     else
-        docker-compose -f $COMPOSE_FILE -f docker-compose-monitoring.yml up -d --build
+        if [ "$MODE" == "standalone" ] ; then 
+            COMPOSE_FILE="docker-compose-standalone.yml"
+        else
+            COMPOSE_FILE="docker-compose-cloud.yml"
+        fi
+        if [ -f "env/${PROJECT}.docker-compose.yml" ] ; then 
+            docker-compose -f $COMPOSE_FILE -f docker-compose-monitoring.yml -f env/${PROJECT}.docker-compose.yml up -d --build
+        else
+            docker-compose -f $COMPOSE_FILE -f docker-compose-monitoring.yml up -d --build
+        fi
     fi
 fi
 
 if [ "$ACTION" == "stop" ] ; then 
-    docker-compose -f $COMPOSE_FILE -f docker-compose-monitoring.yml stop
+    if [ "$MODE" == "monitoring" ] ; then 
+        docker-compose -f docker-compose-monitoring.yml stop
+    else
+        docker-compose -f $COMPOSE_FILE -f docker-compose-monitoring.yml stop
+    fi
 fi
 
 if [ "$ACTION" == "down" ] ; then 
-    docker-compose -f $COMPOSE_FILE -f docker-compose-monitoring.yml down
+    if [ "$MODE" == "monitoring" ] ; then 
+        docker-compose -f docker-compose-monitoring.yml down
+    else
+        docker-compose -f $COMPOSE_FILE -f docker-compose-monitoring.yml down
+    fi
 fi
 
 if [ "$ACTION" == "clean" ] ; then 
-    docker-compose -f $COMPOSE_FILE -f docker-compose-monitoring.yml down
-    docker-compose -f $COMPOSE_FILE -f docker-compose-monitoring.yml rm -v
+    if [ "$MODE" == "monitoring" ] ; then 
+        docker-compose -f docker-compose-monitoring.yml down
+        docker-compose -f docker-compose-monitoring.yml rm -v
+    else
+        docker-compose -f $COMPOSE_FILE -f docker-compose-monitoring.yml down
+        docker-compose -f $COMPOSE_FILE -f docker-compose-monitoring.yml rm -v
+    fi
     docker volume rm $(docker volume ls -q | grep $PROJECT)
 fi
 
