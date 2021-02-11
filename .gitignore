@@ -27,3 +27,5 @@ docker/prometheus/prometheus.yml.save
 docker/readme.txt
 
 docker.save/
+
+docker/prometheus/prometheus.yml
