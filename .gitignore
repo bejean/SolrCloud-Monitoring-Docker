@@ -25,3 +25,5 @@ docker/grafana/dashboards/monitoring-machine.json
 docker/prometheus/prometheus.yml.save
 
 docker/readme.txt
+
+docker.save/

@@ -10,7 +10,6 @@ RUN mkdir /tmp/setup && cd /tmp/setup && \
 RUN apt -y install netcat net-tools procps lsof dos2unix vim unzip
 
 ENV \
-    JAVA_VERSION=${JAVA_VERSION} \
     SOLR_VERSION=${SOLR_VERSION} \
     NODE_EXPORTER_VERSION=${NODE_EXPORTER_VERSION} \
     JMX_EXPORTER_VERSION=${JMX_EXPORTER_VERSION} \

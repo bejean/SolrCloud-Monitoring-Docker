@@ -6,7 +6,7 @@ set -o errexit
 set -o pipefail
 
 JDK_TGZ="/tmp/setup/openjdk-11.tgz"
-if [ "$JAVA_VERSION" = "1.8" ]
+if [[ "$SOLR_VERSION" =~ ^(4|5|6|7)[.].*$ ]]
 then
     JDK_TGZ="/tmp/setup/openjdk-1.8.tgz"
 fi
