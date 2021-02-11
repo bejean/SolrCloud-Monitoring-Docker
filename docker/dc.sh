@@ -65,7 +65,12 @@ cp env/$PROJECT .env
 
 history "$*"
 
-
+if [ "$MODE" == "standalone" ] ; then 
+    COMPOSE_FILE="docker-compose-standalone.yml"
+else
+    COMPOSE_FILE="docker-compose-cloud.yml"
+fi
+        
 if [ "$ACTION" == "up" ] ; then 
     if [ "$MODE" == "monitoring" ] ; then 
         if [ -f "env/${PROJECT}.docker-compose.yml" ] ; then 
@@ -74,11 +79,6 @@ if [ "$ACTION" == "up" ] ; then
             docker-compose -f docker-compose-monitoring.yml up -d --build
         fi
     else
-        if [ "$MODE" == "standalone" ] ; then 
-            COMPOSE_FILE="docker-compose-standalone.yml"
-        else
-            COMPOSE_FILE="docker-compose-cloud.yml"
-        fi
         if [ -f "env/${PROJECT}.docker-compose.yml" ] ; then 
             docker-compose -f $COMPOSE_FILE -f docker-compose-monitoring.yml -f env/${PROJECT}.docker-compose.yml up -d --build
         else
