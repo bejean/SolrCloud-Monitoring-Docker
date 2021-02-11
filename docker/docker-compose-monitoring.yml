@@ -15,6 +15,7 @@ services:
       - '9090:9090'
     networks:
       - solr
+    restart: '${CONTAINER_RESTART}'
 
   alertmanager:
     image: 'prom/alertmanager:${ALERTMANAGER_VERSION}'
@@ -30,6 +31,7 @@ services:
       - '9093:9093'
     networks:
       - solr
+    restart: '${CONTAINER_RESTART}'
 
   solr_exporter:
     image: solr:${SOLR_VERSION}
@@ -48,6 +50,7 @@ services:
       - "8"
     networks:
       - solr
+    restart: '${CONTAINER_RESTART}'
 
   zk_exporter:
     image: 'bitnami/zookeeper-exporter:${ZOOKEEPER_EXPORTER_VERSION}'
@@ -57,6 +60,7 @@ services:
       - '8080:8080'
     networks:
       - solr
+    restart: '${CONTAINER_RESTART}'
 
   grafana:
     image: 'grafana/grafana:${GRAFANA_VERSION}'
@@ -75,6 +79,7 @@ services:
       - '3000:3000'
     networks:
       - solr
+    restart: '${CONTAINER_RESTART}'
 
   loki:
     image: grafana/loki:${LOKI_VERSION}
@@ -86,7 +91,7 @@ services:
     command: -config.file=/etc/loki/local-config.yaml
     networks:
       - solr
-
+    restart: '${CONTAINER_RESTART}'
 
 volumes:
   solr_prometheus:

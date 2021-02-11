@@ -1,43 +1,67 @@
 version: '2.4'
 services:
-  zk1:
-    mem_limit: 1g
-    mem_swappiness: 1
-    memswap_limit: 0
-  zk2:
-    mem_limit: 1g
-    mem_swappiness: 1
-    memswap_limit: 0
-  zk3:
-    mem_limit: 1g
-    mem_swappiness: 1
-    memswap_limit: 0
-  solr1:
-    mem_limit: 1g
-    mem_swappiness: 1
-    memswap_limit: 0
-    environment:
-      - solr_sysprop_solr.disable.shardsWhitelist=true
-      #- solr_sysprop_zone=dc1      
-  solr2:
-    mem_limit: 1g
-    mem_swappiness: 1
-    memswap_limit: 0
-    environment:
-      - solr_sysprop_solr.disable.shardsWhitelist=true
-      #- solr_sysprop_zone=dc2      
-  solr3:
-    mem_limit: 1g
-    mem_swappiness: 1
-    memswap_limit: 0
-    environment:
-      - solr_sysprop_solr.disable.shardsWhitelist=true
-      #- solr_sysprop_zone=dc1      
-  solr4:
-    mem_limit: 1g
-    mem_swappiness: 1
-    memswap_limit: 0
-    environment:
-      - solr_sysprop_solr.disable.shardsWhitelist=true
-      #- solr_sysprop_zone=dc2      
+  # zk1:
+  #   mem_limit: 1g
+  #   mem_swappiness: 1
+  #   memswap_limit: 0
+  # zk2:
+  #   mem_limit: 1g
+  #   mem_swappiness: 1
+  #   memswap_limit: 0
+  # zk3:
+  #   mem_limit: 1g
+  #   mem_swappiness: 1
+  #   memswap_limit: 0
+  # solr1:
+  #   mem_limit: 1g
+  #   mem_swappiness: 1
+  #   memswap_limit: 0
+  #   environment:
+  #     - solr_sysprop_solr.disable.shardsWhitelist=true
+  #     #- solr_sysprop_zone=dc1      
+  # solr2:
+  #   mem_limit: 1g
+  #   mem_swappiness: 1
+  #   memswap_limit: 0
+  #   environment:
+  #     - solr_sysprop_solr.disable.shardsWhitelist=true
+  #     #- solr_sysprop_zone=dc2      
+  # solr3:
+  #   mem_limit: 1g
+  #   mem_swappiness: 1
+  #   memswap_limit: 0
+  #   environment:
+  #     - solr_sysprop_solr.disable.shardsWhitelist=true
+  #     #- solr_sysprop_zone=dc1      
+  # solr4:
+  #   mem_limit: 1g
+  #   mem_swappiness: 1
+  #   memswap_limit: 0
+  #   environment:
+  #     - solr_sysprop_solr.disable.shardsWhitelist=true
+  #     #- solr_sysprop_zone=dc2      
+
+
+  # prometheus:
+  #   extra_hosts: 
+  #     - "zk1:1.2.3.4"
+  #     - "zk2:1.2.3.5"
+  #     - "zk3:1.2.3.6"
+  #     - "solr1:1.2.3.7"
+  #     - "solr2:1.2.3.8"
+  #     - "solr3:1.2.3.9"
+  #     - "solr4:1.2.3.10"
+
+  # zk_exporter:
+  #   extra_hosts: 
+  #     - "zk1:1.2.3.4"
+  #     - "zk2:1.2.3.5"
+  #     - "zk3:1.2.3.6"
+
+  # solr_exporter:
+  #   extra_hosts: 
+  #     - "solr1:1.2.3.7"
+  #     - "solr2:1.2.3.8"
+  #     - "solr3:1.2.3.9"
+  #     - "solr4:1.2.3.10"
 

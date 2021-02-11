@@ -5,7 +5,6 @@ services:
     container_name: '${COMPOSE_PROJECT_NAME}_solr_zk1'
     environment:
       - ZK_VERSION
-      - JAVA_VERSION
       - NODE_EXPORTER_VERSION
       - JMX_EXPORTER_VERSION
       - ZK_ID=1
@@ -15,12 +14,13 @@ services:
       - 'solr_zk1:/opt/zk'
     networks:
       - solr
+    restart: '${CONTAINER_RESTART}'
+
   zk2:
     build: zookeeper
     container_name: '${COMPOSE_PROJECT_NAME}_solr_zk2'
     environment:
       - ZK_VERSION
-      - JAVA_VERSION
       - NODE_EXPORTER_VERSION
       - JMX_EXPORTER_VERSION
       - ZK_ID=2
@@ -30,12 +30,13 @@ services:
       - 'solr_zk2:/opt/zk'
     networks:
       - solr
+    restart: '${CONTAINER_RESTART}'
+
   zk3:
     build: zookeeper
     container_name: '${COMPOSE_PROJECT_NAME}_solr_zk3'
     environment:
       - ZK_VERSION
-      - JAVA_VERSION
       - NODE_EXPORTER_VERSION
       - JMX_EXPORTER_VERSION
       - ZK_ID=3
@@ -45,12 +46,13 @@ services:
       - 'solr_zk3:/opt/zk'
     networks:
       - solr            
+    restart: '${CONTAINER_RESTART}'
+
   solr1:
     build: solr
     container_name: '${COMPOSE_PROJECT_NAME}_solr_solr1'
     environment:
       - SOLR_VERSION
-      - JAVA_VERSION
       - SOLR_HEAP
       - NODE_EXPORTER_VERSION
       - JMX_EXPORTER_VERSION
@@ -64,12 +66,13 @@ services:
       - '../volumes/${COMPOSE_PROJECT_NAME}/data:/opt/data'
     networks:
       - solr
+    restart: '${CONTAINER_RESTART}'
+
   solr2:
     build: solr
     container_name: '${COMPOSE_PROJECT_NAME}_solr_solr2'
     environment:
       - SOLR_VERSION
-      - JAVA_VERSION
       - SOLR_HEAP
       - NODE_EXPORTER_VERSION
       - JMX_EXPORTER_VERSION
@@ -82,12 +85,13 @@ services:
       - 'solr_share:/opt/share'
     networks:
       - solr
+    restart: '${CONTAINER_RESTART}'
+
   solr3:
     build: solr
     container_name: '${COMPOSE_PROJECT_NAME}_solr_solr3'
     environment:
       - SOLR_VERSION
-      - JAVA_VERSION
       - SOLR_HEAP
       - NODE_EXPORTER_VERSION
       - JMX_EXPORTER_VERSION
@@ -100,12 +104,13 @@ services:
       - 'solr_share:/opt/share'
     networks:
       - solr
+    restart: '${CONTAINER_RESTART}'
+
   solr4:
     build: solr
     container_name: '${COMPOSE_PROJECT_NAME}_solr_solr4'
     environment:
       - SOLR_VERSION
-      - JAVA_VERSION
       - SOLR_HEAP
       - NODE_EXPORTER_VERSION
       - JMX_EXPORTER_VERSION
@@ -118,6 +123,7 @@ services:
       - 'solr_share:/opt/share'
     networks:
       - solr
+    restart: '${CONTAINER_RESTART}'
 
   client:
     build: client
@@ -129,6 +135,7 @@ services:
       - JAVA_OPTS=-XX:InitialRAMPercentage=75.0 -XX:MaxRAMPercentage=75.0 -XX:MaxMetaspaceSize=256M -Duser.timezone=Europe/Paris -Dhttps.protocols=TLSv1.1,TLSv1.2 -Xlog:gc*:file=/opt/searchws/log/gc.log::filecount=10,filesize=10m
     networks:
       - solr
+    restart: '${CONTAINER_RESTART}'
 
 
 volumes:
