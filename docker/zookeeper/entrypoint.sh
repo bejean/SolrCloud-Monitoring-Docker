@@ -42,10 +42,6 @@ function deploy_zk_distribution() {
         "${ZK_TGZ}" \
         "${ZK_DISTRIBUTION_PATH}" \
         --strip-components=1
-
-    #if [ -d "./apache-$1-bin" ]; then
-    #    mv ./apache-$1-bin ./$1
-    #fi
 }
 
 
@@ -105,10 +101,6 @@ cp /tmp/setup/zookeeper-env.sh $ZK_DISTRIBUTION_PATH/conf/.
 cp /tmp/setup/log4j.properties $ZK_DISTRIBUTION_PATH/conf/.
 
 sed -i /JAVA_HOME=/c\JAVA_HOME=$JDK_DISTRIBUTION_PATH $ZK_DISTRIBUTION_PATH/conf/zookeeper-env.sh
-
-# sed -i /SOLR_HOST/c\SOLR_HOST=$SOLR_HOST /opt/solr/solr/bin/solr.in.sh
-# sed -i /SOLR_HEAP/c\SOLR_HEAP=$SOLR_HEAP /opt/solr/solr/bin/solr.in.sh
-# sed -i /ZK_/d /opt/solr/solr/bin/solr.in.sh
 
 su -c "$ZK_DISTRIBUTION_PATH/bin/zkServer.sh start" - "$ZK_USER"
 

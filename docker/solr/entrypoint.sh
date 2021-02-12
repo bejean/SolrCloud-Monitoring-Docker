@@ -123,11 +123,6 @@ su -c "$SOLR_DISTRIBUTION_PATH/bin/solr start" - "$SOLR_USER"
 export JAVA_HOME=$JDK_DISTRIBUTION_PATH
 $SOLR_DISTRIBUTION_PATH/prometheus/node_exporter &
 $SOLR_DISTRIBUTION_PATH/promtail/promtail-linux-amd64 -config.file $SOLR_DISTRIBUTION_PATH/promtail/promtail.yml &
-#if [[ $SOLR_HOST =~ [0-9]$ ]]; then
-#    $SOLR_DISTRIBUTION_PATH/contrib/prometheus-exporter/bin/solr-exporter -p 9854 -z zk1:2181,zk2:2181,zk3:2181 -f $SOLR_DISTRIBUTION_PATH/contrib/prometheus-exporter/conf/solr-exporter-config.xml -n 16 &
-#else
-#    $SOLR_DISTRIBUTION_PATH/contrib/prometheus-exporter/bin/solr-exporter -p 9854 -f $SOLR_DISTRIBUTION_PATH/contrib/prometheus-exporter/conf/solr-exporter-config.xml -n 16 &
-#fi
 
 #sleep 10
 #PID=`ps -ef | grep 'openjdk' | grep -v grep | awk '{print $2}'`
