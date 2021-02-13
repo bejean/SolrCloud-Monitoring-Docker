@@ -75,6 +75,7 @@ services:
       - './grafana/dashboards.yml:/etc/grafana/provisioning/dashboards/dashboards.yml'
       - './grafana/grafana.ini:/etc/grafana/grafana.ini'
       - './grafana/dashboards:/var/lib/grafana/dashboards'
+      - './grafana/plugins:/var/lib/grafana/plugins'
     ports:
       - '3000:3000'
     networks:
