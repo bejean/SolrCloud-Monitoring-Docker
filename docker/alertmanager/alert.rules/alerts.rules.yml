@@ -3,7 +3,7 @@ groups:
 - name: Alertes monitoring
   rules:
     - alert: CpuLoad
-      expr: solr_node_load1 / (count without (cpu, mode) (solr_node_cpu_seconds_total{mode="idle"})) > 1
+      expr: node_load1{job="solr_node"} / (count without (cpu, mode) (node_cpu_seconds_total{job="solr_node",mode="idle"})) > 1
       for: 1m
       labels:
         severity: critique
