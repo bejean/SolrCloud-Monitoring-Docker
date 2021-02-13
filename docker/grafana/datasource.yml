@@ -8,6 +8,7 @@ datasources:
   - name: Loki
     type: loki
     access: proxy
+    url: http://loki:3100
   - name: Solr
     type: pue-solr-datasource
     access: proxy
