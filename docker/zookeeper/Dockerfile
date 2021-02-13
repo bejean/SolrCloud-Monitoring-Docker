@@ -10,9 +10,10 @@ RUN mkdir /tmp/setup && cd /tmp/setup && \
 RUN apt -y install netcat net-tools procps lsof dos2unix vim unzip
 
 ENV \
-    ZK_VERSION=${ZK_VERSION} \
+    SOLR_VERSION=${SOLR_VERSION} \
     NODE_EXPORTER_VERSION=${NODE_EXPORTER_VERSION} \
     JMX_EXPORTER_VERSION=${JMX_EXPORTER_VERSION} \
+    PROMTAIL_VERSION=${PROMTAIL_VERSION} \
     ZK_DISTRIBUTION_PATH=/opt/zk/zk \
     JDK_DISTRIBUTION_PATH=/opt/zk/jdk \
     ZK_USER=zookeeper \
@@ -24,6 +25,7 @@ RUN useradd -ms /bin/bash ${ZK_USER}
 ADD zoo.cfg /tmp/setup/zoo.cfg
 ADD zookeeper-env.sh /tmp/setup/zookeeper-env.sh
 ADD log4j.properties /tmp/setup/log4j.properties
+ADD promtail.yml /tmp/setup/promtail.yml
 
 ADD entrypoint.sh /tmp/entrypoint.sh
 RUN dos2unix /tmp/entrypoint.sh && chmod +x /tmp/entrypoint.sh

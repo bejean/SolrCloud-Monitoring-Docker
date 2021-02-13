@@ -16,10 +16,228 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": 4,
-  "iteration": 1612869752083,
+  "id": 3,
+  "iteration": 1613209284235,
   "links": [],
   "panels": [
+    {
+      "datasource": null,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 26,
+      "title": "JVM",
+      "type": "row"
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "Prometheus",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 1
+      },
+      "hiddenSeries": false,
+      "id": 28,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "7.3.7",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "rate (java_lang_Memory_HeapMemoryUsage_used{job=\"solr_jmx\"} [1m]) / java_lang_Memory_HeapMemoryUsage_max{job=\"solr_jmx\"} * 100",
+          "interval": "",
+          "legendFormat": "",
+          "queryType": "randomWalk",
+          "refId": "A"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Used Heap % (1 mn)",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "collapsed": true,
+      "datasource": null,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 9
+      },
+      "id": 22,
+      "panels": [],
+      "title": "Memory",
+      "type": "row"
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "Prometheus",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 5,
+        "w": 6,
+        "x": 0,
+        "y": 10
+      },
+      "hiddenSeries": false,
+      "id": 24,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "7.3.7",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "java_lang_OperatingSystem_TotalSwapSpaceSize{job=\"solr_jmx\"} - java_lang_OperatingSystem_FreeSwapSpaceSize{job=\"solr_jmx\"}",
+          "interval": "",
+          "legendFormat": "",
+          "queryType": "randomWalk",
+          "refId": "A"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Swap Usage",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
     {
       "collapsed": false,
       "datasource": null,
@@ -27,7 +245,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 0
+        "y": 15
       },
       "id": 2,
       "panels": [],
@@ -52,7 +270,7 @@
         "h": 5,
         "w": 6,
         "x": 0,
-        "y": 1
+        "y": 16
       },
       "hiddenSeries": false,
       "id": 19,
@@ -82,7 +300,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "rate(solr_node_disk_io_time_seconds_total{device=\"sda\"}[1m])",
+          "expr": "rate(node_disk_io_time_seconds_total{job=\"solr_node\",device=\"sda\"}[1m])",
           "interval": "",
           "legendFormat": "",
           "queryType": "randomWalk",
@@ -148,7 +366,7 @@
         "h": 5,
         "w": 6,
         "x": 6,
-        "y": 1
+        "y": 16
       },
       "hiddenSeries": false,
       "id": 17,
@@ -178,7 +396,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "rate(solr_node_disk_writes_completed_total{device=\"sda\"}[1m])",
+          "expr": "rate(node_disk_writes_completed_total{job=\"solr_node\",device=\"sda\"}[1m])",
           "interval": "",
           "legendFormat": "",
           "queryType": "randomWalk",
@@ -244,7 +462,7 @@
         "h": 5,
         "w": 6,
         "x": 12,
-        "y": 1
+        "y": 16
       },
       "hiddenSeries": false,
       "id": 15,
@@ -274,7 +492,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "rate(solr_node_disk_reads_completed_total{device=\"sda\"}[1m])",
+          "expr": "rate(node_disk_reads_completed_total{job=\"solr_node\",device=\"sda\"}[1m])",
           "interval": "",
           "legendFormat": "",
           "queryType": "randomWalk",
@@ -340,7 +558,7 @@
         "h": 5,
         "w": 9,
         "x": 0,
-        "y": 6
+        "y": 21
       },
       "hiddenSeries": false,
       "id": 4,
@@ -370,7 +588,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "(solr_node_filesystem_avail_bytes{device=\"/dev/sda1\",mountpoint=\"/opt/solr\"}/solr_node_filesystem_size_bytes{device=\"/dev/sda1\",mountpoint=\"/opt/solr\"} * 100)",
+          "expr": "(node_filesystem_avail_bytes{job=\"solr_node\",device=\"/dev/sda1\",mountpoint=\"/opt/solr\"}/node_filesystem_size_bytes{job=\"solr_node\",device=\"/dev/sda1\",mountpoint=\"/opt/solr\"} * 100)",
           "interval": "",
           "legendFormat": "",
           "queryType": "randomWalk",
@@ -437,7 +655,7 @@
         "h": 5,
         "w": 9,
         "x": 9,
-        "y": 6
+        "y": 21
       },
       "hiddenSeries": false,
       "id": 6,
@@ -467,7 +685,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "solr_node_filesystem_avail_bytes{device=\"/dev/sda1\",mountpoint=\"/opt/solr\"} ",
+          "expr": "node_filesystem_avail_bytes{job=\"solr_node\",device=\"/dev/sda1\",mountpoint=\"/opt/solr\"} ",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -521,7 +739,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 11
+        "y": 26
       },
       "id": 8,
       "panels": [],
@@ -546,7 +764,7 @@
         "h": 5,
         "w": 9,
         "x": 0,
-        "y": 12
+        "y": 27
       },
       "hiddenSeries": false,
       "id": 13,
@@ -576,7 +794,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "solr_node_load1 / count without(cpu, mode) (solr_node_cpu_seconds_total{mode=\"idle\"})",
+          "expr": "node_load1{job=\"solr_node\"} / count without(cpu, mode) (node_cpu_seconds_total{job=\"solr_node\",mode=\"idle\"})",
           "interval": "",
           "legendFormat": "",
           "queryType": "randomWalk",
@@ -642,7 +860,7 @@
         "h": 5,
         "w": 9,
         "x": 9,
-        "y": 12
+        "y": 27
       },
       "hiddenSeries": false,
       "id": 12,
@@ -672,7 +890,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "100 - (avg by (instance) (rate(solr_node_cpu_seconds_total{mode=\"idle\"}[1m])) * 100)",
+          "expr": "100 - (avg by (instance) (rate(node_cpu_seconds_total{job=\"solr_node\",mode=\"idle\"}[1m])) * 100)",
           "interval": "",
           "legendFormat": "",
           "queryType": "randomWalk",
@@ -738,7 +956,7 @@
         "h": 5,
         "w": 9,
         "x": 9,
-        "y": 17
+        "y": 32
       },
       "hiddenSeries": false,
       "id": 20,
@@ -768,7 +986,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "avg by (instance) (rate(solr_node_cpu_seconds_total{mode=\"iowait\"}[1m])) * 100",
+          "expr": "avg by (instance) (rate(node_cpu_seconds_total{job=\"solr_node\",mode=\"iowait\"}[1m])) * 100",
           "interval": "",
           "legendFormat": "",
           "queryType": "randomWalk",
@@ -831,7 +1049,7 @@
           "value": "solr1:9100"
         },
         "datasource": "Prometheus",
-        "definition": "label_values(solr_node_filesystem_avail_bytes{instance=~\".+\"},instance)",
+        "definition": "label_values(node_filesystem_avail_bytes{instance=~\".+\"},instance)",
         "error": null,
         "hide": 0,
         "includeAll": true,
@@ -865,7 +1083,7 @@
             "value": "solr4:9100"
           }
         ],
-        "query": "label_values(solr_node_filesystem_avail_bytes{instance=~\".+\"},instance)",
+        "query": "label_values(node_filesystem_avail_bytes{instance=~\".+\"},instance)",
         "refresh": 0,
         "regex": "",
         "skipUrlSync": false,
@@ -894,5 +1112,5 @@
   "timezone": "",
   "title": "Solr Minimal",
   "uid": "dlF3fZPGz",
-  "version": 3
+  "version": 6
 }

@@ -4,9 +4,11 @@ services:
     build: zookeeper
     container_name: '${COMPOSE_PROJECT_NAME}_solr_zk1'
     environment:
-      - ZK_VERSION
+      - SOLR_VERSION
       - NODE_EXPORTER_VERSION
       - JMX_EXPORTER_VERSION
+      - PROMTAIL_VERSION
+      - ZK_HOST=zk1
       - ZK_ID=1
     ports:
       - 9101:9100
@@ -21,9 +23,11 @@ services:
     build: zookeeper
     container_name: '${COMPOSE_PROJECT_NAME}_solr_zk2'
     environment:
-      - ZK_VERSION
+      - SOLR_VERSION
       - NODE_EXPORTER_VERSION
       - JMX_EXPORTER_VERSION
+      - PROMTAIL_VERSION
+      - ZK_HOST=zk2
       - ZK_ID=2
     volumes:
       - 'solr_zk2:/opt/zk'
@@ -35,9 +39,11 @@ services:
     build: zookeeper
     container_name: '${COMPOSE_PROJECT_NAME}_solr_zk3'
     environment:
-      - ZK_VERSION
+      - SOLR_VERSION
       - NODE_EXPORTER_VERSION
       - JMX_EXPORTER_VERSION
+      - PROMTAIL_VERSION
+      - ZK_HOST=zk3
       - ZK_ID=3
     volumes:
       - 'solr_zk3:/opt/zk'
