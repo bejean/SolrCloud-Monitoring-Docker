@@ -3,7 +3,7 @@ usage(){
     echo ""
     echo "Usage : $0 -a action -p project_name";
     echo ""
-    echo "    -a action         : up | stop | down | clean";
+    echo "    -a action         : up | stop | down | logs | clean";
     echo "    -p project_name   : project_name in order to be create relevant .env file";
     echo "    -m mode           : solr mode (monitoring | cloud | standalone)";
     echo ""
@@ -41,7 +41,7 @@ if [ -z "$ACTION" ] ; then
     usage
 fi
 
-if [[ ! "$ACTION" =~ ^(up|stop|down|clean)$ ]]; then
+if [[ ! "$ACTION" =~ ^(up|stop|down|clean|logs)$ ]]; then
     echo "ERROR: Unknown action!"
     usage
 fi
@@ -112,6 +112,14 @@ if [ "$ACTION" == "clean" ] ; then
         docker-compose -f $COMPOSE_FILE -f docker-compose-monitoring.yml rm -v
     fi
     docker volume rm $(docker volume ls -q | grep $PROJECT)
+fi
+
+if [ "$ACTION" == "logs" ] ; then 
+    if [ "$MODE" == "monitoring" ] ; then 
+        docker-compose -f docker-compose-monitoring.yml logs
+    else
+        docker-compose -f $COMPOSE_FILE -f docker-compose-monitoring.yml logs
+    fi
 fi
 
 rm .env
