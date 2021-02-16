@@ -135,6 +135,11 @@ export JAVA_HOME=$JDK_DISTRIBUTION_PATH
 $SOLR_DISTRIBUTION_PATH/prometheus/node_exporter &
 $SOLR_DISTRIBUTION_PATH/promtail/promtail-linux-amd64 -config.file $SOLR_DISTRIBUTION_PATH/promtail/promtail.yml &
 
+if [[ $SOLR_HOST =~ 1$ ]] && [ "x$FIRST_STARTUP" == "x1" ]; then
+    sleep 30
+    su -c "$SOLR_DISTRIBUTION_PATH/bin/solr create_collection -c test -shards 2 -replicationFactor 2" - "$SOLR_USER"
+fi
+
 #sleep 10
 #PID=`ps -ef | grep 'openjdk' | grep -v grep | awk '{print $2}'`
 #while kill -0 $PID 2> /dev/null; do
