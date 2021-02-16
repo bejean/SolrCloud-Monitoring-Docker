@@ -5,6 +5,20 @@ set -o nounset
 set -o errexit
 set -o pipefail
 
+ZK_VERSION="3.6.2"
+if [[ "$SOLR_VERSION" =~ ^7[.].*$ ]]
+then
+    ZK_VERSION="3.4.14"
+fi
+if [[ "$SOLR_VERSION" =~ ^8[.](0|1)[.].*$ ]]
+then
+    ZK_VERSION="3.4.14"
+fi
+if [[ "$SOLR_VERSION" =~ ^8[.](2|3|4|5|6)[.].*$ ]]
+then
+    ZK_VERSION="3.5.7"
+fi
+
 JDK_TGZ="/tmp/setup/openjdk-11.tgz"
 if [[ $ZK_VERSION = 3.4* ]]
 then
@@ -42,10 +56,6 @@ function deploy_zk_distribution() {
         "${ZK_TGZ}" \
         "${ZK_DISTRIBUTION_PATH}" \
         --strip-components=1
-
-    #if [ -d "./apache-$1-bin" ]; then
-    #    mv ./apache-$1-bin ./$1
-    #fi
 }
 
 
@@ -63,7 +73,8 @@ if [ ! -d "$ZK_DISTRIBUTION_PATH" ]; then
     fi
     wget -O node_exporter.tgz -q https://github.com/prometheus/node_exporter/releases/download/v$NODE_EXPORTER_VERSION/node_exporter-$NODE_EXPORTER_VERSION.linux-amd64.tar.gz
     wget -O jmx_prometheus_javaagent.jar -q https://repo1.maven.org/maven2/io/prometheus/jmx/jmx_prometheus_javaagent/$JMX_EXPORTER_VERSION/jmx_prometheus_javaagent-$JMX_EXPORTER_VERSION.jar
-   
+    wget -O promtail.zip -q https://github.com/grafana/loki/releases/download/v${PROMTAIL_VERSION}/promtail-linux-amd64.zip
+
     echo "Deploy JDK" >> /tmp/setup/setup.log
     deploy_jdk_distribution
 
@@ -81,6 +92,13 @@ if [ ! -d "$ZK_DISTRIBUTION_PATH" ]; then
     cp /tmp/setup/jmx_prometheus_javaagent.jar $ZK_DISTRIBUTION_PATH/jmx-exporter/.
     touch $ZK_DISTRIBUTION_PATH/jmx-exporter/jmx-exporter.yml
     chown -R $ZK_USER: $ZK_DISTRIBUTION_PATH/jmx-exporter
+
+    mkdir $ZK_DISTRIBUTION_PATH/promtail
+    cd $ZK_DISTRIBUTION_PATH/promtail
+    unzip /tmp/setup/promtail.zip
+    cp /tmp/setup/promtail.yml .
+    sed -i s/ZK_HOST/${ZK_HOST}/g $ZK_DISTRIBUTION_PATH/promtail/promtail.yml 
+    chown -R $ZK_USER: $ZK_DISTRIBUTION_PATH/promtail    
 fi
 
 
@@ -106,14 +124,11 @@ cp /tmp/setup/log4j.properties $ZK_DISTRIBUTION_PATH/conf/.
 
 sed -i /JAVA_HOME=/c\JAVA_HOME=$JDK_DISTRIBUTION_PATH $ZK_DISTRIBUTION_PATH/conf/zookeeper-env.sh
 
-# sed -i /SOLR_HOST/c\SOLR_HOST=$SOLR_HOST /opt/solr/solr/bin/solr.in.sh
-# sed -i /SOLR_HEAP/c\SOLR_HEAP=$SOLR_HEAP /opt/solr/solr/bin/solr.in.sh
-# sed -i /ZK_/d /opt/solr/solr/bin/solr.in.sh
-
 su -c "$ZK_DISTRIBUTION_PATH/bin/zkServer.sh start" - "$ZK_USER"
 
 export JAVA_HOME=$JDK_DISTRIBUTION_PATH
 $ZK_DISTRIBUTION_PATH/prometheus/node_exporter &
+$ZK_DISTRIBUTION_PATH/promtail/promtail-linux-amd64 -config.file $ZK_DISTRIBUTION_PATH/promtail/promtail.yml &
 
 #sleep 10
 #PID=`ps -ef | grep 'openjdk' | grep -v grep | awk '{print $2}'`

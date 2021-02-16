@@ -43,7 +43,7 @@ services:
       - "-p"
       - "9854"
       - "-z"
-      - "zk1:2181,zk2:2181,zk3:2181"
+      - "${ZK_HOSTS}${ZK_CHROOT}"
       - "-f"
       - "/opt/solr/contrib/prometheus-exporter/conf/solr-exporter-config.xml"
       - "-n"
@@ -55,7 +55,7 @@ services:
   zk_exporter:
     image: 'bitnami/zookeeper-exporter:${ZOOKEEPER_EXPORTER_VERSION}'
     container_name: '${COMPOSE_PROJECT_NAME}_monitoring_zk_exporter'
-    command: '--zk-list=zk1:2181,zk2:2181,zk3:2181 --timeout=5'
+    command: '--zk-list=${ZK_HOSTS} --timeout=5'
     ports:
       - '8080:8080'
     networks:
@@ -75,6 +75,7 @@ services:
       - './grafana/dashboards.yml:/etc/grafana/provisioning/dashboards/dashboards.yml'
       - './grafana/grafana.ini:/etc/grafana/grafana.ini'
       - './grafana/dashboards:/var/lib/grafana/dashboards'
+      - './grafana/plugins:/var/lib/grafana/plugins'
     ports:
       - '3000:3000'
     networks:

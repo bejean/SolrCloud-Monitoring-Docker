@@ -4,12 +4,15 @@ services:
     build: zookeeper
     container_name: '${COMPOSE_PROJECT_NAME}_solr_zk1'
     environment:
-      - ZK_VERSION
+      - SOLR_VERSION
       - NODE_EXPORTER_VERSION
       - JMX_EXPORTER_VERSION
+      - PROMTAIL_VERSION
+      - ZK_HOST=zk1
       - ZK_ID=1
-  #  ports:
-  #    - 8983:8983
+    ports:
+      - 9101:9100
+      - 7071:7070
     volumes:
       - 'solr_zk1:/opt/zk'
     networks:
@@ -20,12 +23,12 @@ services:
     build: zookeeper
     container_name: '${COMPOSE_PROJECT_NAME}_solr_zk2'
     environment:
-      - ZK_VERSION
+      - SOLR_VERSION
       - NODE_EXPORTER_VERSION
       - JMX_EXPORTER_VERSION
+      - PROMTAIL_VERSION
+      - ZK_HOST=zk2
       - ZK_ID=2
-  #  ports:
-  #    - 8983:8983
     volumes:
       - 'solr_zk2:/opt/zk'
     networks:
@@ -36,12 +39,12 @@ services:
     build: zookeeper
     container_name: '${COMPOSE_PROJECT_NAME}_solr_zk3'
     environment:
-      - ZK_VERSION
+      - SOLR_VERSION
       - NODE_EXPORTER_VERSION
       - JMX_EXPORTER_VERSION
+      - PROMTAIL_VERSION
+      - ZK_HOST=zk3
       - ZK_ID=3
-  #  ports:
-  #    - 8983:8983
     volumes:
       - 'solr_zk3:/opt/zk'
     networks:
@@ -60,6 +63,8 @@ services:
       - SOLR_HOST=solr1
     ports:
       - 8983:8983
+      - 9100:9100
+      - 7070:7070
     volumes:
       - 'solr_solr1:/opt/solr'
       - 'solr_share:/opt/share'
