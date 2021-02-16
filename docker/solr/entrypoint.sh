@@ -5,6 +5,8 @@ set -o nounset
 set -o errexit
 set -o pipefail
 
+env > /tmp/env.txt
+
 JDK_TGZ="/tmp/setup/openjdk-11.tgz"
 if [[ "$SOLR_VERSION" =~ ^(4|5|6|7)[.].*$ ]]
 then
@@ -12,6 +14,7 @@ then
 fi
 SOLR_TGZ="/tmp/setup/solr-${SOLR_VERSION}.tgz"
 
+FIRST_STARTUP="0"
 
 # JDK_DOWNLOAD_PATH="/tmp/jdk.tgz"
 # SOLR_DOWNLOAD_PATH="/tmp/solr.tgz"
@@ -50,8 +53,9 @@ else
     echo "NOT CLOUD" >> /tmp/setup/setup.log
 fi
 
-
 if [ ! -d "$SOLR_DISTRIBUTION_PATH" ]; then
+    FIRST_STARTUP="1"
+
     echo "--- Starting Solr installation" >> /tmp/setup/setup.log
     env >> /tmp/setup/setup.log
     
@@ -89,8 +93,6 @@ if [ ! -d "$SOLR_DISTRIBUTION_PATH" ]; then
     chown -R $SOLR_USER: $SOLR_DISTRIBUTION_PATH/promtail
 fi
 
-
-
 if [ ! -d "$SOLR_LOG_PATH" ]; then
     echo "--- Setup Solr logs" >> /tmp/setup/setup.log
     mkdir -p $SOLR_LOG_PATH
@@ -109,6 +111,15 @@ cp /tmp/setup/solr.in.sh $SOLR_DISTRIBUTION_PATH/bin/.
 sed -i /SOLR_JAVA_HOME=/c\SOLR_JAVA_HOME=$JDK_DISTRIBUTION_PATH $SOLR_DISTRIBUTION_PATH/bin/solr.in.sh
 sed -i /SOLR_HOST=/c\SOLR_HOST=$SOLR_HOST $SOLR_DISTRIBUTION_PATH/bin/solr.in.sh
 sed -i /SOLR_HEAP=/c\SOLR_HEAP=$SOLR_HEAP $SOLR_DISTRIBUTION_PATH/bin/solr.in.sh
+if [ ! -z "$ZK_CHROOT" ]
+then
+    sed -i /ZK_HOST=/c\ZK_HOST="$ZK_HOSTS$ZK_CHROOT" $SOLR_DISTRIBUTION_PATH/bin/solr.in.sh
+    sleep 30
+    if [[ $SOLR_HOST =~ 1$ ]] && [ "x$FIRST_STARTUP" == "x1" ]; then
+        su -c "$SOLR_DISTRIBUTION_PATH/bin/solr zk mkroot $ZK_CHROOT -z zk1:2181" - "$SOLR_USER"
+    fi
+    sleep 15
+fi
 if [[ ! $SOLR_HOST =~ [0-9]$ ]]; then
     sed -i /ZK_/d $SOLR_DISTRIBUTION_PATH/bin/solr.in.sh
 fi
@@ -131,5 +142,3 @@ $SOLR_DISTRIBUTION_PATH/promtail/promtail-linux-amd64 -config.file $SOLR_DISTRIB
 #done
 
 tail -f /var/log/lastlog
-
-

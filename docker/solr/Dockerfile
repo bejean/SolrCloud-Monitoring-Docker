@@ -16,6 +16,8 @@ ENV \
     PROMTAIL_VERSION=${PROMTAIL_VERSION} \
     SOLR_HEAP=${SOLR_HEAP} \
     SOLR_HOST=${SOLR_HOST} \
+    ZK_HOSTS=${ZK_HOSTS} \
+    ZK_CHROOT=${ZK_CHROOT} \
     SOLR_DISTRIBUTION_PATH=/opt/solr/solr \
     JDK_DISTRIBUTION_PATH=/opt/solr/jdk \
     JAVA_HOME=/opt/solr/jdk \

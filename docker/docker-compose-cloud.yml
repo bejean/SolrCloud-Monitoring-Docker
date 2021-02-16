@@ -57,6 +57,8 @@ services:
     environment:
       - SOLR_VERSION
       - SOLR_HEAP
+      - ZK_HOSTS
+      - ZK_CHROOT
       - NODE_EXPORTER_VERSION
       - JMX_EXPORTER_VERSION
       - PROMTAIL_VERSION
@@ -79,6 +81,8 @@ services:
     environment:
       - SOLR_VERSION
       - SOLR_HEAP
+      - ZK_HOSTS
+      - ZK_CHROOT
       - NODE_EXPORTER_VERSION
       - JMX_EXPORTER_VERSION
       - PROMTAIL_VERSION
@@ -98,6 +102,8 @@ services:
     environment:
       - SOLR_VERSION
       - SOLR_HEAP
+      - ZK_HOSTS
+      - ZK_CHROOT
       - NODE_EXPORTER_VERSION
       - JMX_EXPORTER_VERSION
       - PROMTAIL_VERSION
@@ -117,6 +123,8 @@ services:
     environment:
       - SOLR_VERSION
       - SOLR_HEAP
+      - ZK_HOSTS
+      - ZK_CHROOT
       - NODE_EXPORTER_VERSION
       - JMX_EXPORTER_VERSION
       - PROMTAIL_VERSION
