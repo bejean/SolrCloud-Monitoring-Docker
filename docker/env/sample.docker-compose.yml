@@ -18,8 +18,10 @@ services:
 
   # solr_exporter:
   #   extra_hosts: 
+  #     - "zk1:1.2.3.4"
+  #     - "zk2:1.2.3.5"
+  #     - "zk3:1.2.3.6"
   #     - "solr1:1.2.3.7"
   #     - "solr2:1.2.3.8"
   #     - "solr3:1.2.3.9"
   #     - "solr4:1.2.3.10"
-
