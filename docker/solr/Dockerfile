@@ -30,6 +30,7 @@ RUN useradd -ms /bin/bash ${SOLR_USER}
 
 ADD solr.in.sh /tmp/setup/solr.in.sh
 ADD promtail.yml /tmp/setup/promtail.yml
+#ADD jmx-exporter.yml /tmp/setup/jmx-exporter.yml
 
 ADD entrypoint.sh /tmp/entrypoint.sh
 RUN dos2unix /tmp/entrypoint.sh && chmod +x /tmp/entrypoint.sh

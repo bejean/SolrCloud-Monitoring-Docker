@@ -5,7 +5,10 @@ set -o nounset
 set -o errexit
 set -o pipefail
 
-env > /tmp/env.txt
+echo "----------------------------------------"
+env
+echo "----------------------------------------"
+
 
 JDK_TGZ="/tmp/setup/openjdk-11.tgz"
 if [[ "$SOLR_VERSION" =~ ^(4|5|6|7)[.].*$ ]]
@@ -48,31 +51,31 @@ function deploy_solr_distribution() {
 }
 
 if [[ $SOLR_HOST =~ [0-9]$ ]]; then
-    echo "CLOUD" >> /tmp/setup/setup.log
+    echo "Cloud mode"
 else
-    echo "NOT CLOUD" >> /tmp/setup/setup.log
+    echo "Standalone mode"
 fi
 
 if [ ! -d "$SOLR_DISTRIBUTION_PATH" ]; then
     FIRST_STARTUP="1"
 
-    echo "--- Starting Solr installation" >> /tmp/setup/setup.log
-    env >> /tmp/setup/setup.log
+    echo "Starting Solr installation"
     
-    echo "Download Solr - http://archive.apache.org/dist/lucene/solr/${SOLR_VERSION}/solr-${SOLR_VERSION}.tgz" >> /tmp/setup/setup.log
+    echo "Download Solr - http://archive.apache.org/dist/lucene/solr/${SOLR_VERSION}/solr-${SOLR_VERSION}.tgz"
     cd /tmp/setup
     wget -q http://archive.apache.org/dist/lucene/solr/${SOLR_VERSION}/solr-${SOLR_VERSION}.tgz
     wget -O node_exporter.tgz -q https://github.com/prometheus/node_exporter/releases/download/v$NODE_EXPORTER_VERSION/node_exporter-$NODE_EXPORTER_VERSION.linux-amd64.tar.gz
     wget -O jmx_prometheus_javaagent.jar -q https://repo1.maven.org/maven2/io/prometheus/jmx/jmx_prometheus_javaagent/$JMX_EXPORTER_VERSION/jmx_prometheus_javaagent-$JMX_EXPORTER_VERSION.jar
     wget -O promtail.zip -q https://github.com/grafana/loki/releases/download/v${PROMTAIL_VERSION}/promtail-linux-amd64.zip
 
-    echo "Deploy JDK" >> /tmp/setup/setup.log
+    echo "Deploy JDK" 
     deploy_jdk_distribution
 
-    echo "Deploy SOLR" >> /tmp/setup/setup.log
+    echo "Deploy SOLR" 
     deploy_solr_distribution
     chown -R $SOLR_USER: $SOLR_DISTRIBUTION_PATH
 
+    echo "Deploy Node exporter" 
     mkdir $SOLR_DISTRIBUTION_PATH/prometheus
     cd $SOLR_DISTRIBUTION_PATH/prometheus
     tar xzf /tmp/setup/node_exporter.tgz
@@ -80,11 +83,14 @@ if [ ! -d "$SOLR_DISTRIBUTION_PATH" ]; then
     rm -rf node_exporter-$NODE_EXPORTER_VERSION.linux-amd64
     chown -R $SOLR_USER: $SOLR_DISTRIBUTION_PATH/prometheus
 
+    echo "Deploy JMX exporter" 
     mkdir $SOLR_DISTRIBUTION_PATH/jmx-exporter
     cp /tmp/setup/jmx_prometheus_javaagent.jar $SOLR_DISTRIBUTION_PATH/jmx-exporter/.
+    #cp /tmp/setup/jmx-exporter.yml $SOLR_DISTRIBUTION_PATH/jmx-exporter/.
     touch $SOLR_DISTRIBUTION_PATH/jmx-exporter/jmx-exporter.yml
     chown -R $SOLR_USER: $SOLR_DISTRIBUTION_PATH/jmx-exporter
 
+    echo "Deploy Promtail" 
     mkdir $SOLR_DISTRIBUTION_PATH/promtail
     cd $SOLR_DISTRIBUTION_PATH/promtail
     unzip /tmp/setup/promtail.zip
@@ -94,14 +100,14 @@ if [ ! -d "$SOLR_DISTRIBUTION_PATH" ]; then
 fi
 
 if [ ! -d "$SOLR_LOG_PATH" ]; then
-    echo "--- Setup Solr logs" >> /tmp/setup/setup.log
+    echo "Setup Solr logs : $SOLR_LOG_PATH" 
     mkdir -p $SOLR_LOG_PATH
 fi
 chown -R $SOLR_USER: $SOLR_LOG_PATH
 
 
 if [ ! -d "$SOLR_DATA_PATH" ]; then
-    echo "--- Setup Solr home" >> /tmp/setup/setup.log
+    echo "Setup Solr home : $SOLR_DATA_PATH" 
     mkdir -p $SOLR_DATA_PATH
     cp -r $SOLR_DISTRIBUTION_PATH/server/solr/* $SOLR_DATA_PATH/.
 fi
@@ -113,11 +119,15 @@ sed -i /SOLR_HOST=/c\SOLR_HOST=$SOLR_HOST $SOLR_DISTRIBUTION_PATH/bin/solr.in.sh
 sed -i /SOLR_HEAP=/c\SOLR_HEAP=$SOLR_HEAP $SOLR_DISTRIBUTION_PATH/bin/solr.in.sh
 if [ ! -z "$ZK_CHROOT" ]
 then
+    echo "Configure Zookeeper chroot mode" 
     sed -i /ZK_HOST=/c\ZK_HOST="$ZK_HOSTS$ZK_CHROOT" $SOLR_DISTRIBUTION_PATH/bin/solr.in.sh
+    echo "    Pause (30s)" 
     sleep 30
     if [[ $SOLR_HOST =~ 1$ ]] && [ "x$FIRST_STARTUP" == "x1" ]; then
+        echo "    Create Zookeeper chroot node $ZK_CHROOT" 
         su -c "$SOLR_DISTRIBUTION_PATH/bin/solr zk mkroot $ZK_CHROOT -z zk1:2181" - "$SOLR_USER"
     fi
+    echo "    Pause (15s)" 
     sleep 15
 fi
 if [[ ! $SOLR_HOST =~ [0-9]$ ]]; then
@@ -129,6 +139,7 @@ while IFS='=' read -r name value ; do
   fi
 done < <(env)
 
+echo "Start Solr and exporters" 
 su -c "$SOLR_DISTRIBUTION_PATH/bin/solr start" - "$SOLR_USER"
 
 export JAVA_HOME=$JDK_DISTRIBUTION_PATH
@@ -136,6 +147,8 @@ $SOLR_DISTRIBUTION_PATH/prometheus/node_exporter &
 $SOLR_DISTRIBUTION_PATH/promtail/promtail-linux-amd64 -config.file $SOLR_DISTRIBUTION_PATH/promtail/promtail.yml &
 
 if [[ $SOLR_HOST =~ 1$ ]] && [ "x$FIRST_STARTUP" == "x1" ]; then
+    echo "First startup initiate test collection" 
+    echo "    Pause (30s)" 
     sleep 30
     su -c "$SOLR_DISTRIBUTION_PATH/bin/solr create_collection -c test -shards 2 -replicationFactor 2" - "$SOLR_USER"
 fi
