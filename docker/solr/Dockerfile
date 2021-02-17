@@ -16,6 +16,8 @@ ENV \
     PROMTAIL_VERSION=${PROMTAIL_VERSION} \
     SOLR_HEAP=${SOLR_HEAP} \
     SOLR_HOST=${SOLR_HOST} \
+    ZK_HOSTS=${ZK_HOSTS} \
+    ZK_CHROOT=${ZK_CHROOT} \
     SOLR_DISTRIBUTION_PATH=/opt/solr/solr \
     JDK_DISTRIBUTION_PATH=/opt/solr/jdk \
     JAVA_HOME=/opt/solr/jdk \
@@ -28,6 +30,7 @@ RUN useradd -ms /bin/bash ${SOLR_USER}
 
 ADD solr.in.sh /tmp/setup/solr.in.sh
 ADD promtail.yml /tmp/setup/promtail.yml
+#ADD jmx-exporter.yml /tmp/setup/jmx-exporter.yml
 
 ADD entrypoint.sh /tmp/entrypoint.sh
 RUN dos2unix /tmp/entrypoint.sh && chmod +x /tmp/entrypoint.sh
