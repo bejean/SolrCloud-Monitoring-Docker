@@ -81,6 +81,6 @@ scrape_configs:
 
   - job_name: 'zk_jmx'
     #scrape_interval: 1m
-    #scrape_timeout: 30s
+    #scrape_timeout: 15s
     static_configs:
     - targets: ['zk1:7070', 'zk2:7070', 'zk3:7070']
