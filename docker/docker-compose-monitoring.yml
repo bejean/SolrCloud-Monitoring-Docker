@@ -36,18 +36,27 @@ services:
   solr_exporter:
     image: solr:${SOLR_VERSION}
     container_name: '${COMPOSE_PROJECT_NAME}_monitoring_solr_exporter'
+    environment:
+      - ZK_HOSTS
+      - ZK_CHROOT
     ports:
-     - "9854:9854"
-    entrypoint:
-      - "/opt/solr/contrib/prometheus-exporter/bin/solr-exporter"
-      - "-p"
-      - "9854"
-      - "-z"
-      - "${ZK_HOSTS}${ZK_CHROOT}"
-      - "-f"
-      - "/opt/solr/contrib/prometheus-exporter/conf/solr-exporter-config.xml"
-      - "-n"
-      - "8"
+      - "9854:9854"
+    volumes:
+      - './solr/solr-exporter-entrypoint.sh:/docker-entrypoint-initdb.d/init.sh'
+      #- './solr/solr-exporter-entrypoint.sh:/opt/solr/contrib/prometheus-exporter/bin/solr-exporter-entrypoint.sh'
+    #entrypoint:
+      #- docker-entrypoint.sh
+      #- solr-exporter-entrypoint.sh
+      #- "/opt/solr/contrib/prometheus-exporter/bin/solr-exporter-entrypoint.sh" 
+      # - "/opt/solr/contrib/prometheus-exporter/bin/solr-exporter"
+      # - "-p"
+      # - "9854"
+      # - "-z"
+      # - "${ZK_HOSTS}${ZK_CHROOT}"
+      # - "-f"
+      # - "/opt/solr/contrib/prometheus-exporter/conf/solr-exporter-config.xml"
+      # - "-n"
+      # - "8"
     networks:
       - solr
     restart: '${CONTAINER_RESTART}'
