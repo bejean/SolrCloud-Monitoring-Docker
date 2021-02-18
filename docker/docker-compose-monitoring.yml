@@ -39,6 +39,7 @@ services:
     environment:
       - ZK_HOSTS
       - ZK_CHROOT
+      - SOLR_EXPORTER_METRIC_GROUPS
     ports:
       - "9854:9854"
     volumes:
