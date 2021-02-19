@@ -9,6 +9,42 @@ groups:
         severity: critique
       annotations:
         identifier: "{{ $labels.instance }}"
-        summary: "CPU load average (1mn)"
+        summary: "CPU load average per CPU (1mn)"
         description_starts: "Value is high : {{ $value }}"
         description_ends: "Value is back to normal : {{ $value }}"
+
+    - alert: JvmHeapUsage
+      expr: max_over_time(java_lang_Memory_HeapMemoryUsage_used[1m]) / java_lang_Memory_HeapMemoryUsage_committed * 100 > 80
+      for: 1m
+      labels:
+        severity: critique
+      annotations:
+        identifier: "{{ $labels.instance }}"
+        summary: "JVM Heap % usage average (1mn)"
+        description_starts: "Value is high : {{ $value }}"
+        description_ends: "Value is back to normal : {{ $value }}"
+
+    - alert: JvmFullGcCount
+      expr: increase(jvm_gc_collection_seconds_count{gc="ConcurrentMarkSweep"}[1m]) > 8
+      for: 1m
+      labels:
+        severity: critique
+      annotations:
+        identifier: "{{ $labels.instance }}"
+        summary: "Full JVM GC Count (1mn)"
+        description_starts: "Value is high : {{ $value }}"
+        description_ends: "Value is back to normal : {{ $value }}"
+
+    - alert: JvmFullGcTime
+      expr: increase(jvm_gc_collection_seconds_sum{gc="ConcurrentMarkSweep"}[1m]) / increase(jvm_gc_collection_seconds_count{gc="ConcurrentMarkSweep"}[1m]) > 1
+      for: 1m
+      labels:
+        severity: critique
+      annotations:
+        identifier: "{{ $labels.instance }}"
+        summary: "Full JVM GC Time (1mn)"
+        description_starts: "Value is high : {{ $value }}"
+        description_ends: "Value is back to normal : {{ $value }}"
+  
+
+

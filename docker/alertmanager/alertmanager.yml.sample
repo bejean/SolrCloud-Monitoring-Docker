@@ -9,7 +9,7 @@ route:
 receivers:
 - name: slack_general
   slack_configs:
-  - api_url: 'Slack webhook URLs here'                                # <-- Ici on met la Slack webhook URLs
+  - api_url: 'https://hooks.slack.xxx/xxx'                                # <-- Ici on met la Slack webhook URLs
     channel: alerts                                              
     icon_emoji: ":rotating_light:"                                    
     title_link: "http://prometheus:9090/alerts"                       # <-- Ici on met l'url d'alertmanage pour reprendre le nom des alertes sur le /alerts
