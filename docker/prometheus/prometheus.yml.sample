@@ -57,18 +57,16 @@ scrape_configs:
   # jmx-exporter - 7070
   # zk-exporter - 8080
   
-  - job_name: 'solr_metrics'
-    scrape_interval: 120s
-    scrape_timeout: 30s
-    static_configs:
-    - targets: ['solr_exporter:9854']
+  # - job_name: 'solr_metrics'
+  #   static_configs:
+  #   - targets: ['solr_exporter:9854']
 
   - job_name: 'solr_node'
     static_configs:
     - targets: ['solr1:9100', 'solr2:9100', 'solr3:9100', 'solr4:9100']
 
   - job_name: 'solr_jmx'
-    scrape_interval: 30m
+    scrape_interval: 30s
     scrape_timeout: 20s
     static_configs:
     - targets: ['solr1:7070', 'solr2:7070', 'solr3:7070', 'solr4:7070']
