@@ -13,14 +13,25 @@ groups:
         description_starts: "Value is high : {{ $value }}"
         description_ends: "Value is back to normal : {{ $value }}"
 
-    - alert: JvmHeapUsage
-      expr: max_over_time(java_lang_Memory_HeapMemoryUsage_used[1m]) / java_lang_Memory_HeapMemoryUsage_committed * 100 > 80
+    - alert: JvmHeapUsageSolr
+      expr: max_over_time(java_lang_Memory_HeapMemoryUsage_used{instance=~"solr.*"}[1m]) / java_lang_Memory_HeapMemoryUsage_committed{instance=~"solr.*"} * 100 > 80
       for: 1m
       labels:
         severity: critique
       annotations:
         identifier: "{{ $labels.instance }}"
-        summary: "JVM Heap % usage average (1mn)"
+        summary: "Solr JVM Heap % usage average (1mn)"
+        description_starts: "Value is high : {{ $value }}"
+        description_ends: "Value is back to normal : {{ $value }}"
+
+    - alert: JvmHeapUsageZk
+      expr: max_over_time(java_lang_Memory_HeapMemoryUsage_used{instance=~"zk.*"}[1m]) / java_lang_Memory_HeapMemoryUsage_committed{instance=~"zk.*"} * 100 > 95
+      for: 1m
+      labels:
+        severity: critique
+      annotations:
+        identifier: "{{ $labels.instance }}"
+        summary: "Zk JVM Heap % usage average (1mn)"
         description_starts: "Value is high : {{ $value }}"
         description_ends: "Value is back to normal : {{ $value }}"
 
@@ -46,5 +57,37 @@ groups:
         description_starts: "Value is high : {{ $value }}"
         description_ends: "Value is back to normal : {{ $value }}"
   
+    - alert: ZkCount
+      expr: sum by (job) (zk_up) < 3
+      for: 1m
+      labels:
+        severity: critique
+      annotations:
+        identifier: "{{ $labels.instance }}"
+        summary: "Zookeeper up members count"
+        description_starts: "Value is unexpected : {{ $value }}"
+        description_ends: "Value is back to normal : {{ $value }}"
+  
+    - alert: ZkPendingSync
+      expr: sum by (job) (zk_pending_syncs) > 2
+      for: 1m
+      labels:
+        severity: critique
+      annotations:
+        identifier: "{{ $labels.instance }}"
+        summary: "Zookeeper pending sync"
+        description_starts: "Value is high : {{ $value }}"
+        description_ends: "Value is back to normal : {{ $value }}"
+  
+    - alert: SolrDataFreeDisk
+      expr: (node_filesystem_avail_bytes{job="solr_node",device=~".*sda[1-4]"}/node_filesystem_size_bytes{job="solr_node",device=~".*sda[1-4]"} * 100) < 20
+      for: 1m
+      labels:
+        severity: critique
+      annotations:
+        identifier: "{{ $labels.instance }}"
+        summary: "Solr data free disk"
+        description_starts: "Value is low : {{ $value }}"
+        description_ends: "Value is back to normal : {{ $value }}"
 
 

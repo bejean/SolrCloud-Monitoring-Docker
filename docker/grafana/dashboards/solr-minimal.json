@@ -17,7 +17,7 @@
   "gnetId": null,
   "graphTooltip": 0,
   "id": 3,
-  "iteration": 1613729890345,
+  "iteration": 1613758980175,
   "links": [],
   "panels": [
     {
@@ -880,7 +880,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "(node_filesystem_avail_bytes{instance=~\"$instance.*\",device=\"/dev/sda1\"}/node_filesystem_size_bytes{instance=~\"$instance.*\",device=\"/dev/sda1\"} * 100)",
+          "expr": "(node_filesystem_avail_bytes{instance=~\"$instance.*\",job=\"solr_node\",device=~\".*sda[1-4]\"}/node_filesystem_size_bytes{instance=~\"$instance.*\",job=\"solr_node\",device=~\".*sda[1-4]\"} * 100)",
           "interval": "",
           "legendFormat": "",
           "queryType": "randomWalk",
@@ -977,7 +977,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "node_filesystem_avail_bytes{instance=~\"$instance.*\",device=\"/dev/sda1\"} ",
+          "expr": "node_filesystem_avail_bytes{instance=~\"$instance.*\",job=\"solr_node\",device=~\".*sda[1-4]\"} ",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -1613,7 +1613,7 @@
   "timepicker": {
     "refresh_intervals": [
       "5s",
-      "10s",
+      "15s",
       "30s",
       "1m",
       "5m"
@@ -1622,5 +1622,5 @@
   "timezone": "",
   "title": "Solr Minimal",
   "uid": "",
-  "version": 18
+  "version": 23
 }
