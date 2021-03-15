@@ -58,6 +58,14 @@ fi
 
 if [ ! -f "env/$PROJECT" ]; then
     echo "env/$PROJECT not found"
+   	cp env/sample env/$PROJECT
+	sed -i /COMPOSE_PROJECT_NAME=/c\COMPOSE_PROJECT_NAME=$PROJECT env/$PROJECT
+	if [ "$MODE" == "standalone" ] ; then 
+    	sed -i /ZK_HOSTS=/c\#ZK_HOSTS= env/$PROJECT
+    	sed -i /ZK_CHROOT=/c\#ZK_CHROOT= env/$PROJECT
+	fi
+    echo "Created based on env/sample"
+    echo "Edit it and restart"
     usage
 fi
 
