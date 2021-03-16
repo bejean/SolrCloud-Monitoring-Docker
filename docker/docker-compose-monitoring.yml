@@ -61,6 +61,7 @@ services:
     networks:
       - solr
     restart: '${CONTAINER_RESTART}'
+    user: root
 
   zk_exporter:
     image: 'bitnami/zookeeper-exporter:${ZOOKEEPER_EXPORTER_VERSION}'

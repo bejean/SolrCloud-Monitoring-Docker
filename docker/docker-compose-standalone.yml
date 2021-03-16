@@ -1,0 +1,40 @@
+version: '2.4'
+services:
+  solr:
+    build: solr
+    container_name: '${COMPOSE_PROJECT_NAME}_solr_solr'
+    environment:
+      - SOLR_VERSION
+      - SOLR_HEAP
+      #- ZK_HOSTS
+      #- ZK_CHROOT
+      - NODE_EXPORTER_VERSION
+      - JMX_EXPORTER_VERSION
+      - PROMTAIL_VERSION
+      - SOLR_HOST=solr
+    ports:
+      - 8983:8983
+      - 9100:9100
+      - 7070:7070
+    volumes:
+      - 'solr_solr:/opt/solr'
+      - 'solr_share:/opt/share'
+      - './packages:/opt/packages'
+      - '../volumes/${COMPOSE_PROJECT_NAME}/data:/opt/data'
+    networks:
+      - solr
+    restart: '${CONTAINER_RESTART}'
+    
+
+volumes:
+  solr_solr:
+    driver: local
+  solr_share:
+    driver: local
+
+networks:
+  solr:
+    name: '${COMPOSE_PROJECT_NAME}_solr'
+    driver: bridge
+
+    

@@ -63,7 +63,14 @@ if [ ! -d "$SOLR_DISTRIBUTION_PATH" ]; then
     
     echo "Download Solr - http://archive.apache.org/dist/lucene/solr/${SOLR_VERSION}/solr-${SOLR_VERSION}.tgz"
     cd /tmp/setup
-    wget -q http://archive.apache.org/dist/lucene/solr/${SOLR_VERSION}/solr-${SOLR_VERSION}.tgz
+    if [ -f "/opt/packages/solr-${SOLR_VERSION}.tgz" ]; then
+        cp /opt/packages/solr-${SOLR_VERSION}.tgz .
+    else
+        wget -q http://archive.apache.org/dist/lucene/solr/${SOLR_VERSION}/solr-${SOLR_VERSION}.tgz
+        if [[ $SOLR_HOST =~ 1$ ]] || [ "x$SOLR_HOST" == "x" ]; then
+            cp solr-${SOLR_VERSION}.tgz /opt/packages/.
+        fi
+    fi
     wget -O node_exporter.tgz -q https://github.com/prometheus/node_exporter/releases/download/v$NODE_EXPORTER_VERSION/node_exporter-$NODE_EXPORTER_VERSION.linux-amd64.tar.gz
     wget -O jmx_prometheus_javaagent.jar -q https://repo1.maven.org/maven2/io/prometheus/jmx/jmx_prometheus_javaagent/$JMX_EXPORTER_VERSION/jmx_prometheus_javaagent-$JMX_EXPORTER_VERSION.jar
     wget -O promtail.zip -q https://github.com/grafana/loki/releases/download/v${PROMTAIL_VERSION}/promtail-linux-amd64.zip
@@ -146,13 +153,18 @@ export JAVA_HOME=$JDK_DISTRIBUTION_PATH
 $SOLR_DISTRIBUTION_PATH/prometheus/node_exporter &
 $SOLR_DISTRIBUTION_PATH/promtail/promtail-linux-amd64 -config.file $SOLR_DISTRIBUTION_PATH/promtail/promtail.yml &
 
-if [[ $SOLR_HOST =~ 1$ ]] && [ "x$FIRST_STARTUP" == "x1" ]; then
-    echo "First startup initiate test collection" 
+if [[ "$SOLR_VERSION" =~ ^(7|8|9)[.].*$ ]] && [ "x$FIRST_STARTUP" == "x1" ]
+then
+    echo "First startup initiate first collection" 
     echo "    Pause (30s)" 
     sleep 30
-    su -c "$SOLR_DISTRIBUTION_PATH/bin/solr create_collection -c test -shards 2 -replicationFactor 2" - "$SOLR_USER"
+    if [[ $SOLR_HOST =~ 1$ ]] 
+    then
+        su -c "$SOLR_DISTRIBUTION_PATH/bin/solr create_collection -c first -shards 2 -replicationFactor 2" - "$SOLR_USER"
+    else
+        su -c "$SOLR_DISTRIBUTION_PATH/bin/solr create_core -c first" - "$SOLR_USER"
+    fi
 fi
-
 #sleep 10
 #PID=`ps -ef | grep 'openjdk' | grep -v grep | awk '{print $2}'`
 #while kill -0 $PID 2> /dev/null; do
