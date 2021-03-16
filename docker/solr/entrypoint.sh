@@ -153,15 +153,16 @@ export JAVA_HOME=$JDK_DISTRIBUTION_PATH
 $SOLR_DISTRIBUTION_PATH/prometheus/node_exporter &
 $SOLR_DISTRIBUTION_PATH/promtail/promtail-linux-amd64 -config.file $SOLR_DISTRIBUTION_PATH/promtail/promtail.yml &
 
-if [[ "$SOLR_VERSION" =~ ^(7|8|9)[.].*$ ]]
+if [[ "$SOLR_VERSION" =~ ^(7|8|9)[.].*$ ]] && [ "x$FIRST_STARTUP" == "x1" ]
 then
-    echo "First startup initiate test collection" 
+    echo "First startup initiate first collection" 
     echo "    Pause (30s)" 
     sleep 30
-    if [[ $SOLR_HOST =~ 1$ ]] && [ "x$FIRST_STARTUP" == "x1" ]; then
-        su -c "$SOLR_DISTRIBUTION_PATH/bin/solr create_collection -c test -shards 2 -replicationFactor 2" - "$SOLR_USER"
+    if [[ $SOLR_HOST =~ 1$ ]] 
+    then
+        su -c "$SOLR_DISTRIBUTION_PATH/bin/solr create_collection -c first -shards 2 -replicationFactor 2" - "$SOLR_USER"
     else
-        su -c "$SOLR_DISTRIBUTION_PATH/bin/solr create_core -c test" - "$SOLR_USER"
+        su -c "$SOLR_DISTRIBUTION_PATH/bin/solr create_core -c first" - "$SOLR_USER"
     fi
 fi
 #sleep 10
