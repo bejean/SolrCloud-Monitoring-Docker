@@ -94,6 +94,7 @@ services:
       - 'solr_solr2:/opt/solr'
       - 'solr_share:/opt/share'
       - './packages:/opt/packages'
+      - '../volumes/${COMPOSE_PROJECT_NAME}/data:/opt/data'
     networks:
       - solr
     restart: '${CONTAINER_RESTART}'
@@ -116,6 +117,7 @@ services:
       - 'solr_solr3:/opt/solr'
       - 'solr_share:/opt/share'
       - './packages:/opt/packages'
+      - '../volumes/${COMPOSE_PROJECT_NAME}/data:/opt/data'
     networks:
       - solr
     restart: '${CONTAINER_RESTART}'
@@ -138,6 +140,7 @@ services:
       - 'solr_solr4:/opt/solr'
       - 'solr_share:/opt/share'
       - './packages:/opt/packages'
+      - '../volumes/${COMPOSE_PROJECT_NAME}/data:/opt/data'
     networks:
       - solr
     restart: '${CONTAINER_RESTART}'
